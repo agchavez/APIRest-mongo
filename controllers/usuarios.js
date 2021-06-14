@@ -28,17 +28,21 @@ const usuariosPost = async(req, res = response) => {
     
     const { nombre, correo, password, rol } = req.body;
     const usuario = new Usuario({ nombre, correo, password, rol });
-
-    // Encriptar la contraseña
+    try {
+        // Encriptar la contraseña
     const salt = bcryptjs.genSaltSync();
-    usuario.password = bcryptjs.hashSync( password, salt );
+    usuario.password = bcryptjs.hashSync( password.toString(), salt );
 
     // Guardar en BD
     await usuario.save();
 
-    res.json({
+    res.status(201).json({
         usuario
     });
+    } catch (error) {
+        res.status(400).json({msg:"Error", error})
+    }
+    
 }
 
 const usuariosPut = async(req, res = response) => {
