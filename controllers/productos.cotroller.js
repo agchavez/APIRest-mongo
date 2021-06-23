@@ -1,4 +1,4 @@
-const { response } = require("express");
+const { response, request } = require("express");
 const { Producto, Categoria } = require("../models/index.model");
 
 
@@ -75,12 +75,59 @@ const obtenerProducto = async (req= request, res=response)=>{
             error
         })
     }
+    
+}
+const actualizarProducto = async(req=request, res= response)=>{
+    const {...data} = req.body;
+    const id = req.params.id;
+    
+    if(data.nombre){
+        data.nombre = data.nombre.toUpperCase()
+    }
+    data.usuario = req.usuario._id
+
+    try {
+        const producto = await Producto.findByIdAndUpdate(id, data);
+        res.status(201).json({
+            msg:"actualizo",
+            id
+        })
+        
+    } catch (error) {
+        res.status(500).json({
+            msg:"Error al actualizar el producto",
+            error
+        })
+    }
+}
+
+
+const eliminarProducto = async(req=request, res = response)=>{
+    const {id} = req.params;
+    try {
+        const producto = await Producto.findByIdAndUpdate( id, { estado: false } );
+
+        res.status(201).json({
+            msg:"Eliminado",
+            id
+        })
+    } catch (error) {
+        res.status(500).json({
+            msg:"error al elimiar producto",
+            error
+        })
+    }
+    
 
 }
 
 
+
 module.exports = {
+    actualizarProducto,
     crearProducto,
     obtenerProdustos,
-    obtenerProducto
+    obtenerProducto,
+    eliminarProducto
+    
 }

@@ -1,6 +1,7 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
-const { crearProducto, obtenerProdustos, obtenerProducto } = require('../controllers/productos.cotroller');
+const { crearProducto, obtenerProdustos, obtenerProducto, actualizarProducto, eliminarProducto } = require('../controllers/productos.cotroller');
+const { existeProductoPorId } = require('../helpers/db-validators');
 const { validarJWT, isAdminRole } = require('../middlewares');
 
 
@@ -26,5 +27,21 @@ router.get('/', obtenerProdustos);
 router.get('/:id',[
     check('id','El id del producto no es valido').isMongoId()
 ], obtenerProducto);
+
+router.put('/:id',[
+    check('id', 'El id del producto no es valido').isMongoId(),
+    check('id').custom(existeProductoPorId),
+    validarJWT,
+    validarCampos
+],actualizarProducto);
+
+// Borrar producto -privado - solo userRole ADMIN
+router.delete('/:id',[
+    check('id', 'No es un ID válido').isMongoId(),
+    check('id').custom( existeProductoPorId ),
+    validarJWT,
+    isAdminRole,
+    validarCampos
+],eliminarProducto); 
 
 module.exports = router;

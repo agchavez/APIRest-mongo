@@ -73,7 +73,7 @@ const actualizarCategoria = async(req=request, res = response) =>{
         res.status(201).json(categoria);
         
     } catch (error) {
-        res.status(400).json({
+        res.status(500).json({
             msg:"error al actualizar categoria",
             error
         })
@@ -88,7 +88,7 @@ const eliminarCategoria = async(req=request, res = response)=>{
         res.json(usuario);
         
     } catch (error) {
-        res.status(400).json({
+        res.status(500).json({
             msg:"error al elimiar categoria",
             error
         })
